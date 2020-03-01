@@ -4,11 +4,7 @@ set Wallpaper with react-native
 
 ## Install
 
-    npm install --save react-native-wallpaper-manager
-  
-## Link
-
-    react-native link react-native-wallpaper-manager
+    npm install git+https://git@github.com/vladimirevstratov/react-native-wallpaper-manager.git
   
 ## Usage
 
