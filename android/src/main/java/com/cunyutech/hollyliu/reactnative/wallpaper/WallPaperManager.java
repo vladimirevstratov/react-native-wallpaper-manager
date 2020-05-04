@@ -231,6 +231,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
                 {
                     Log.d("React native", "before setting bitmap in SimpleTarget");
                     sendMessage("before", "Set Wallpaper", type);
+
                     switch (type) {
                         case "Home":
                             wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM);
