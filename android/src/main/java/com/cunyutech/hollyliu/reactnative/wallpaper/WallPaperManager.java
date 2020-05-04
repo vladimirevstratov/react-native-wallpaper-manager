@@ -229,7 +229,6 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(resource, 0, resource.length);
                 try
                 {
-                    Log.d("React native", "before setting bitmap in SimpleTarget");
                     sendMessage("before", "Set Wallpaper", type);
 
                     switch (type) {
