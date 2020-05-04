@@ -1,5 +1,8 @@
 package com.cunyutech.hollyliu.reactnative.wallpaper;
 
+import static android.app.WallpaperManager.FLAG_LOCK;
+import static android.app.WallpaperManager.FLAG_SYSTEM;
+
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
@@ -71,7 +74,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setWallpaper(final ReadableMap params, Callback callback){
+    public void setWallpaper(final ReadableMap params, final String type, Callback callback){
 
         final String source = params.hasKey("uri") ? params.getString("uri") : null;
         ReadableMap headers = params.hasKey("headers") ? params.getMap("headers") : null;
@@ -89,7 +92,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
         rctCallback = callback;
         rctParams = params;
 
-        final SimpleTarget<byte[]> simpleTarget = this.getSimpleTarget(source);
+        final SimpleTarget<byte[]> simpleTarget = this.getSimpleTarget(source, type);
         mCurrentActivity = getCurrentActivity();
         if(mCurrentActivity==null){
             sendMessage("error","CurrentActivity is null",source);
@@ -142,6 +145,7 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
                 Bitmap mBitmap = BitmapFactory.decodeResource(this.getReactApplicationContext().getResources(), resId);
                 try
                 {
+                    Log.d("React native", "before setting bitmap in mUri == null");
                     wallpaperManager.setBitmap(mBitmap);
                     sendMessage("success","Set Wallpaper Success",source);
                 }
@@ -218,15 +222,29 @@ public class WallPaperManager extends ReactContextBaseJavaModule {
         }
     }
 
-    private SimpleTarget<byte[]> getSimpleTarget(final String source){
+    private SimpleTarget<byte[]> getSimpleTarget(final String source, final String type){
         return new SimpleTarget<byte[]>(1080, 1920){
             @Override
             public void onResourceReady(byte[] resource, GlideAnimation<? super byte[]> glideAnimation) {
                 Bitmap bitmap = BitmapFactory.decodeByteArray(resource, 0, resource.length);
                 try
                 {
-                    wallpaperManager.setBitmap(bitmap);
-                    sendMessage("success","Set Wallpaper Success",source);
+                    Log.d("React native", "before setting bitmap in SimpleTarget");
+                    sendMessage("before", "Set Wallpaper", type);
+                    switch (type) {
+                        case "Home":
+                            wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM);
+                            break;
+                        case "Lock":
+                            wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK);
+                            break;
+                        case "Both":
+                            wallpaperManager.setBitmap(bitmap);
+                            break;
+                        default:
+                            wallpaperManager.setBitmap(bitmap);
+                    }
+                    sendMessage("success","Set Wallpaper Success", type);
                 }
                 catch (Exception e)
                 {
